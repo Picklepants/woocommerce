@@ -43,7 +43,7 @@ class WC_API_Resource {
 
 		$response_names = array( 'order', 'coupon', 'customer', 'product', 'report',
 			'customer_orders', 'customer_downloads', 'order_note', 'order_refund',
-			'product_reviews', 'product_category'
+			'product_reviews', 'product_category', 'tax', 'tax_class'
 		);
 
 		foreach ( $response_names as $name ) {
@@ -438,26 +438,27 @@ class WC_API_Resource {
 	 * @return bool true if the current user has the permissions to perform the context on the post
 	 */
 	private function check_permission( $post, $context ) {
+		$permission = false;
 
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			$post = get_post( $post );
 		}
 
 		if ( is_null( $post ) ) {
-			return false;
+			return $permission;
 		}
 
 		$post_type = get_post_type_object( $post->post_type );
 
 		if ( 'read' === $context ) {
-			return ( 'revision' !== $post->post_type && current_user_can( $post_type->cap->read_private_posts, $post->ID ) );
+			$permission = 'revision' !== $post->post_type && current_user_can( $post_type->cap->read_private_posts, $post->ID );
 		} elseif ( 'edit' === $context ) {
-			return current_user_can( $post_type->cap->edit_post, $post->ID );
+			$permission = current_user_can( $post_type->cap->edit_post, $post->ID );
 		} elseif ( 'delete' === $context ) {
-			return current_user_can( $post_type->cap->delete_post, $post->ID );
-		} else {
-			return false;
+			$permission = current_user_can( $post_type->cap->delete_post, $post->ID );
 		}
+
+		return apply_filters( 'woocommerce_api_check_permission', $permission, $context, $post, $post_type );
 	}
 
 }

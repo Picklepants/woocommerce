@@ -4,14 +4,18 @@
  *
  * Functions related to pages and menus.
  *
- * @author 		WooThemes
- * @category 	Core
- * @package 	WooCommerce/Functions
- * @version     2.1.0
+ * @author   WooThemes
+ * @category Core
+ * @package  WooCommerce/Functions
+ * @version  2.6.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 /**
- * Replace a page title with the endpoint title
+ * Replace a page title with the endpoint title.
  * @param  string $title
  * @return string
  */
@@ -34,7 +38,7 @@ function wc_page_endpoint_title( $title ) {
 add_filter( 'the_title', 'wc_page_endpoint_title' );
 
 /**
- * Retrieve page ids - used for myaccount, edit_address, shop, cart, checkout, pay, view_order, terms. returns -1 if no page is found
+ * Retrieve page ids - used for myaccount, edit_address, shop, cart, checkout, pay, view_order, terms. returns -1 if no page is found.
  *
  * @param string $page
  * @return int
@@ -58,7 +62,7 @@ function wc_get_page_id( $page ) {
 }
 
 /**
- * Retrieve page permalink
+ * Retrieve page permalink.
  *
  * @param string $page
  * @return string
@@ -70,18 +74,23 @@ function wc_get_page_permalink( $page ) {
 }
 
 /**
- * Get endpoint URL
+ * Get endpoint URL.
  *
  * Gets the URL for an endpoint, which varies depending on permalink settings.
+ *
+ * @param  string $endpoint
+ * @param  string $value
+ * @param  string $permalink
  *
  * @return string
  */
 function wc_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
-	if ( ! $permalink )
+	if ( ! $permalink ) {
 		$permalink = get_permalink();
+	}
 
 	// Map endpoint to options
-	$endpoint = isset( WC()->query->query_vars[ $endpoint ] ) ? WC()->query->query_vars[ $endpoint ] : $endpoint;
+	$endpoint = ! empty( WC()->query->query_vars[ $endpoint ] ) ? WC()->query->query_vars[ $endpoint ] : $endpoint;
 	$value    = ( 'edit-address' == $endpoint ) ? wc_edit_address_i18n( $value ) : $value;
 
 	if ( get_option( 'permalink_structure' ) ) {
@@ -100,60 +109,7 @@ function wc_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
 }
 
 /**
- * Get the edit address slug translation.
- *
- * @param  string  $id   Address ID.
- * @param  bool    $flip Flip the array to make it possible to retrieve the values ​​from both sides.
- *
- * @return string        Address slug i18n.
- */
-function wc_edit_address_i18n( $id, $flip = false ) {
-	$slugs = apply_filters( 'woocommerce_edit_address_slugs', array(
-		'billing'  => sanitize_title( _x( 'billing', 'edit-address-slug', 'woocommerce' ) ),
-		'shipping' => sanitize_title( _x( 'shipping', 'edit-address-slug', 'woocommerce' ) )
-	) );
-
-	if ( $flip ) {
-		$slugs = array_flip( $slugs );
-	}
-
-	if ( ! isset( $slugs[ $id ] ) ) {
-		return $id;
-	}
-
-	return $slugs[ $id ];
-}
-
-/**
- * Returns the url to the lost password endpoint url
- *
- * @access public
- * @return string
- */
-function wc_lostpassword_url( $default_password_reset_url ) {
-	$wc_password_reset_url = wc_get_page_permalink( 'myaccount' );
-	if ( false !== $wc_password_reset_url ) {
-    	return wc_get_endpoint_url( 'lost-password', '', $wc_password_reset_url );
-	} else {
-		return $default_password_reset_url;
-	}
-}
-add_filter( 'lostpassword_url',  'wc_lostpassword_url', 10, 1 );
-
-
-/**
- * Get the link to the edit account details page
- *
- * @return string
- */
-function wc_customer_edit_account_url() {
-	$edit_account_url = wc_get_endpoint_url( 'edit-account', '', wc_get_page_permalink( 'myaccount' ) );
-
-	return apply_filters( 'woocommerce_customer_edit_account_url', $edit_account_url );
-}
-
-/**
- * Hide menu items conditionally
+ * Hide menu items conditionally.
  *
  * @param array $items
  * @return array
@@ -162,9 +118,11 @@ function wc_nav_menu_items( $items ) {
 	if ( ! is_user_logged_in() ) {
 		$customer_logout = get_option( 'woocommerce_logout_endpoint', 'customer-logout' );
 
-		foreach ( $items as $key => $item ) {
-			if ( strstr( $item->url, $customer_logout ) ) {
-				unset( $items[ $key ] );
+		if ( ! empty( $customer_logout ) ) {
+			foreach ( $items as $key => $item ) {
+				if ( strstr( $item->url, $customer_logout ) ) {
+					unset( $items[ $key ] );
+				}
 			}
 		}
 	}
@@ -206,7 +164,7 @@ function wc_nav_menu_item_classes( $menu_items ) {
 			}
 
 		// Set active state if this is the shop page link
-		} elseif ( is_shop() && $shop_page == $menu_item->object_id ) {
+		} elseif ( is_shop() && $shop_page == $menu_item->object_id && 'page' === $menu_item->object ) {
 			$menu_items[ $key ]->current = true;
 			$classes[] = 'current-menu-item';
 			$classes[] = 'current_page_item';
@@ -228,7 +186,7 @@ add_filter( 'wp_nav_menu_objects', 'wc_nav_menu_item_classes', 2 );
 /**
  * Fix active class in wp_list_pages for shop page.
  *
- * https://github.com/woothemes/woocommerce/issues/177
+ * https://github.com/woothemes/woocommerce/issues/177.
  *
  * @author Jessor, Peter Sterling
  * @param string $pages

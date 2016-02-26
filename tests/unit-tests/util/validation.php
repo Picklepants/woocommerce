@@ -2,13 +2,13 @@
 namespace WooCommerce\Tests\Util;
 
 /**
- * Class Validation
+ * Class Validation.
  * @package WooCommerce\Tests\Util
  * @since 2.3
  */
 class Validation extends \WC_Unit_Test_Case {
 	/**
-	 * Test is_email()
+	 * Test is_email().
 	 *
 	 * @since 2.3
 	 */
@@ -19,7 +19,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Data provider for test_is_phone
+	 * Data provider for test_is_phone.
 	 *
 	 * @since 2.4
 	 */
@@ -34,7 +34,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test is_phone()
+	 * Test is_phone().
 	 *
 	 * @dataProvider data_provider_test_is_phone
 	 * @since 2.3
@@ -44,7 +44,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Data provider for test_is_postcode()
+	 * Data provider for test_is_postcode().
 	 *
 	 * @since 2.4
 	 */
@@ -82,12 +82,22 @@ class Validation extends \WC_Unit_Test_Case {
 			array( false, \WC_Validation::is_postcode( '99999 999', 'BR' ) ),
 			array( false, \WC_Validation::is_postcode( '99999-ABC', 'BR' ) )
 		);
+        
+        $ca = array(
+            array( true, \WC_Validation::is_postcode( 'A9A 9A9', 'CA' ) ),
+			array( true, \WC_Validation::is_postcode( 'A9A9A9', 'CA' ) ),
+            array( true, \WC_Validation::is_postcode( 'a9a9a9', 'CA' ) ),
+			array( false, \WC_Validation::is_postcode( 'D0A 9A9', 'CA' ) ),
+            array( false, \WC_Validation::is_postcode( '99999', 'CA' ) ),
+            array( false, \WC_Validation::is_postcode( 'ABC999', 'CA' ) ),
+			array( false, \WC_Validation::is_postcode( '0A0A0A', 'CA' ) )
+        );
 
-		return array_merge( $generic, $gb, $us, $ch, $br );
+		return array_merge( $generic, $gb, $us, $ch, $br, $ca );
 	}
 
 	/**
-	 * Test is_postcode()
+	 * Test is_postcode().
 	 *
 	 * @dataProvider data_provider_test_is_postcode
 	 * @since 2.4
@@ -97,7 +107,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Data provider for test_is_GB_postcode
+	 * Data provider for test_is_GB_postcode.
 	 *
 	 * @since 2.4
 	 */
@@ -118,7 +128,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test is_GB_postcode()
+	 * Test is_GB_postcode().
 	 *
 	 * @dataProvider data_provider_test_is_GB_postcode
 	 * @since 2.4
@@ -128,7 +138,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Data provider for test_format_postcode
+	 * Data provider for test_format_postcode.
 	 *
 	 * @since 2.4
 	 */
@@ -144,7 +154,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test format_postcode()
+	 * Test format_postcode().
 	 *
 	 * @dataProvider data_provider_test_format_postcode
 	 * @since 2.4
@@ -154,7 +164,7 @@ class Validation extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test format_phone()
+	 * Test format_phone().
 	 *
 	 * @since 2.4
 	 */

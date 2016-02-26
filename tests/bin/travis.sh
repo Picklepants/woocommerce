@@ -7,7 +7,7 @@ if [ $1 == 'before' ]; then
 	[ $TRAVIS_PHP_VERSION == '5.2' ] && exit;
 
 	# install php-coveralls to send coverage info
-	composer init --require=satooshi/php-coveralls:0.7.x-dev -n
+	composer init --require=satooshi/php-coveralls:0.7.0 -n
 	composer install --no-interaction
 
 elif [ $1 == 'after' ]; then
@@ -17,4 +17,9 @@ elif [ $1 == 'after' ]; then
 
 	# send coverage data to coveralls
 	php vendor/bin/coveralls --verbose --exclude-no-stmt
+
+	# get scrutinizer ocular and run it
+	wget https://scrutinizer-ci.com/ocular.phar
+	ocular.phar code-coverage:upload --format=php-clover ./tmp/clover.xml
+
 fi

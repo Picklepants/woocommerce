@@ -2,7 +2,7 @@
 namespace WooCommerce\Tests\Util;
 
 /**
- * Class Log
+ * Class Log.
  * @package WooCommerce\Tests\Util
  * @since 2.3
  */
@@ -12,7 +12,7 @@ class Log extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test add()
+	 * Test add().
 	 *
 	 * @since 2.4
 	 */
@@ -21,11 +21,12 @@ class Log extends \WC_Unit_Test_Case {
 
 		$log->add( 'unit-tests', 'this is a message' );
 
-		$this->assertEquals( date( 'm-d-Y @ H:i:s' ) . ' - this is a message' . PHP_EOL, $this->read_content( 'unit-tests' ) );
+		$this->assertStringMatchesFormat( '%d-%d-%d @ %d:%d:%d - %s', $this->read_content( 'unit-tests' ) );
+		$this->assertStringEndsWith( ' - this is a message' . PHP_EOL, $this->read_content( 'unit-tests' ) );
 	}
 
 	/**
-	 * Test clear()
+	 * Test clear().
 	 *
 	 * @since 2.4
 	 */

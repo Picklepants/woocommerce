@@ -453,8 +453,8 @@ class WC_API_Server {
 				'currency'           => get_woocommerce_currency(),
 				'currency_format'    => get_woocommerce_currency_symbol(),
 				'currency_position'  => get_option( 'woocommerce_currency_pos' ),
-				'thousand_separator' => get_option( 'woocommerce_price_decimal_sep' ),
-				'decimal_separator'  => get_option( 'woocommerce_price_thousand_sep' ),
+				'thousand_separator' => get_option( 'woocommerce_price_thousand_sep' ),
+				'decimal_separator'  => get_option( 'woocommerce_price_decimal_sep' ),
 				'price_num_decimals' => wc_get_price_decimals(),
 				'tax_included'       => wc_prices_include_tax(),
 				'weight_unit'        => get_option( 'woocommerce_weight_unit' ),
@@ -646,6 +646,11 @@ class WC_API_Server {
 	 * @return string
 	 */
 	public function get_raw_data() {
+		// $HTTP_RAW_POST_DATA is deprecated on PHP 5.6
+		if ( function_exists( 'phpversion' ) && version_compare( phpversion(), '5.6', '>=' ) ) {
+			return file_get_contents( 'php://input' );
+		}
+
 		global $HTTP_RAW_POST_DATA;
 
 		// A bug in PHP < 5.2.2 makes $HTTP_RAW_POST_DATA not set by default,

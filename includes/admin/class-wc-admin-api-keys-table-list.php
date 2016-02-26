@@ -19,7 +19,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 
 	/**
-	 * Initialize the webhook table list
+	 * Initialize the webhook table list.
 	 */
 	public function __construct() {
 		parent::__construct( array(
@@ -30,7 +30,7 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 	}
 
 	/**
-	 * Get list columns
+	 * Get list columns.
 	 *
 	 * @return array
 	 */
@@ -46,17 +46,17 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 	}
 
 	/**
-	 * Column cb
+	 * Column cb.
 	 *
 	 * @param  array $key
 	 * @return string
 	 */
 	public function column_cb( $key ) {
-		return sprintf( '<input type="checkbox" name="%1$s[]" value="%2$s" />', $this->_args['singular'], $key['key_id'] );
+		return sprintf( '<input type="checkbox" name="key[]" value="%1$s" />', $key['key_id'] );
 	}
 
 	/**
-	 * Return description column
+	 * Return description column.
 	 *
 	 * @param  array $key
 	 * @return string
@@ -93,7 +93,7 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 	}
 
 	/**
-	 * Return truncated consumer key column
+	 * Return truncated consumer key column.
 	 *
 	 * @param  array $key
 	 * @return string
@@ -103,7 +103,7 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 	}
 
 	/**
-	 * Return user column
+	 * Return user column.
 	 *
 	 * @param  array $key
 	 * @return string
@@ -125,7 +125,7 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 	}
 
 	/**
-	 * Return permissions column
+	 * Return permissions column.
 	 *
 	 * @param  array $key
 	 * @return string
@@ -146,7 +146,7 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 	}
 
 	/**
-	 * Return last access column
+	 * Return last access column.
 	 *
 	 * @param  array $key
 	 * @return string
@@ -162,7 +162,7 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 	}
 
 	/**
-	 * Get bulk actions
+	 * Get bulk actions.
 	 *
 	 * @return array
 	 */
@@ -194,22 +194,18 @@ class WC_Admin_API_Keys_Table_List extends WP_List_Table {
 		}
 
 		$search = '';
+
 		if ( ! empty( $_REQUEST['s'] ) ) {
-			$search = "AND description LIKE '" . $wpdb->esc_like( $_REQUEST['s'] ) . "'";
+			$search = "AND description LIKE '%" . esc_sql( $wpdb->esc_like( wc_clean( $_REQUEST['s'] ) ) ) . "%' ";
 		}
 
 		// Get the API keys
-		$keys = $wpdb->get_results( $wpdb->prepare( "
-			SELECT key_id, user_id, description, permissions, truncated_key, last_access
-			FROM {$wpdb->prefix}woocommerce_api_keys
-			WHERE 1 = 1
-			$search
-			ORDER BY key_id DESC
-			LIMIT %d
-			OFFSET %d
-		 ", $per_page, $offset ), ARRAY_A );
+		$keys = $wpdb->get_results(
+			"SELECT key_id, user_id, description, permissions, truncated_key, last_access FROM {$wpdb->prefix}woocommerce_api_keys WHERE 1 = 1 {$search}" .
+			$wpdb->prepare( "ORDER BY key_id DESC LIMIT %d OFFSET %d;", $per_page, $offset ), ARRAY_A
+		);
 
-		$count = $wpdb->get_var( "SELECT COUNT(key_id) FROM {$wpdb->prefix}woocommerce_api_keys WHERE 1 = 1 $search" );
+		$count = $wpdb->get_var( "SELECT COUNT(key_id) FROM {$wpdb->prefix}woocommerce_api_keys WHERE 1 = 1 {$search};" );
 
 		$this->items = $keys;
 

@@ -1,8 +1,13 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 /**
  * Product Factory Class
  *
- * The WooCommerce product factory creating the right product object
+ * The WooCommerce product factory creating the right product object.
  *
  * @class 		WC_Product_Factory
  * @version		2.3.0
@@ -13,7 +18,7 @@
 class WC_Product_Factory {
 
 	/**
-	 * get_product function.
+	 * Get product.
 	 *
 	 * @param bool $the_product (default: false)
 	 * @param array $args (default: array())
@@ -36,7 +41,7 @@ class WC_Product_Factory {
 	}
 
 	/**
-	 * Create a WC coding standards compliant class name e.g. WC_Product_Type_Class instead of WC_Product_type-class
+	 * Create a WC coding standards compliant class name e.g. WC_Product_Type_Class instead of WC_Product_type-class.
 	 * @param  string $product_type
 	 * @return string|false
 	 */
@@ -45,7 +50,7 @@ class WC_Product_Factory {
 	}
 
 	/**
-	 * Get the product class name
+	 * Get the product class name.
 	 * @param  WP_Post $the_product
 	 * @param  array $args (default: array())
 	 * @return string
@@ -58,7 +63,7 @@ class WC_Product_Factory {
 			if ( isset( $args['product_type'] ) ) {
 				$product_type = $args['product_type'];
 			} else {
-				$terms        = get_the_terms( $product_id, 'product_type' );
+				$terms        = get_the_terms( $the_product, 'product_type' );
 				$product_type = ! empty( $terms ) ? sanitize_title( current( $terms )->name ) : 'simple';
 			}
 		} elseif( 'product_variation' === $post_type ) {
@@ -74,7 +79,7 @@ class WC_Product_Factory {
 	}
 
 	/**
-	 * Get the product object
+	 * Get the product object.
 	 * @param  mixed $the_product
 	 * @uses   WP_Post
 	 * @return WP_Post|bool false on failure

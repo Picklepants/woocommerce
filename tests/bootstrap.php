@@ -19,7 +19,7 @@ class WC_Unit_Tests_Bootstrap {
 	public $plugin_dir;
 
 	/**
-	 * Setup the unit testing environment
+	 * Setup the unit testing environment.
 	 *
 	 * @since 2.2
 	 */
@@ -30,7 +30,7 @@ class WC_Unit_Tests_Bootstrap {
 
 		$this->tests_dir    = dirname( __FILE__ );
 		$this->plugin_dir   = dirname( $this->tests_dir );
-		$this->wp_tests_dir = getenv( 'WP_TESTS_DIR' ) ? getenv( 'WP_TESTS_DIR' ) : $this->plugin_dir . '/tmp/wordpress-tests-lib';
+		$this->wp_tests_dir = getenv( 'WP_TESTS_DIR' ) ? getenv( 'WP_TESTS_DIR' ) : '/tmp/wordpress-tests-lib';
 
 		// load test function so tests_add_filter() is available
 		require_once( $this->wp_tests_dir . '/includes/functions.php' );
@@ -49,7 +49,7 @@ class WC_Unit_Tests_Bootstrap {
 	}
 
 	/**
-	 * Load WooCommerce
+	 * Load WooCommerce.
 	 *
 	 * @since 2.2
 	 */
@@ -58,7 +58,7 @@ class WC_Unit_Tests_Bootstrap {
 	}
 
 	/**
-	 * Install WooCommerce after the test environment and WC have been loaded
+	 * Install WooCommerce after the test environment and WC have been loaded.
 	 *
 	 * @since 2.2
 	 */
@@ -66,10 +66,10 @@ class WC_Unit_Tests_Bootstrap {
 
 		// clean existing install first
 		define( 'WP_UNINSTALL_PLUGIN', true );
+		update_option( 'woocommerce_status_options', array( 'uninstall_data' => 1 ) );
 		include( $this->plugin_dir . '/uninstall.php' );
 
 		WC_Install::install();
-		update_option( 'woocommerce_calc_shipping', 'yes' ); // Needed for tests cart and shipping methods
 
 		// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
 		$GLOBALS['wp_roles']->reinit();
@@ -78,7 +78,7 @@ class WC_Unit_Tests_Bootstrap {
 	}
 
 	/**
-	 * Load WC-specific test cases and factories
+	 * Load WC-specific test cases and factories.
 	 *
 	 * @since 2.2
 	 */
@@ -103,10 +103,11 @@ class WC_Unit_Tests_Bootstrap {
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-shipping.php' );
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-customer.php' );
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-order.php' );
+		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-shipping-zones.php' );
 	}
 
 	/**
-	 * Get the single class instance
+	 * Get the single class instance.
 	 *
 	 * @since 2.2
 	 * @return WC_Unit_Tests_Bootstrap

@@ -9,7 +9,7 @@ jQuery( function( $ ) {
 	// Tabs
 	$( '.wc-tabs-wrapper, .woocommerce-tabs' )
 		.on( 'init', function() {
-			$( '.wc-tab, .panel:not(.panel .panel)' ).hide();
+			$( '.wc-tab, .woocommerce-tabs .panel:not(.panel .panel)' ).hide();
 
 			var hash  = window.location.hash;
 			var url   = window.location.href;
@@ -48,12 +48,14 @@ jQuery( function( $ ) {
 
 	$( 'body' )
 		.on( 'click', '#respond p.stars a', function() {
-			var $star   = $( this ),
-				$rating = $( this ).closest( '#respond' ).find( '#rating' );
+			var $star   	= $( this ),
+				$rating 	= $( this ).closest( '#respond' ).find( '#rating' ),
+				$container 	= $( this ).closest( '.stars' );
 
 			$rating.val( $star.text() );
 			$star.siblings( 'a' ).removeClass( 'active' );
 			$star.addClass( 'active' );
+			$container.addClass( 'selected' );
 
 			return false;
 		})
